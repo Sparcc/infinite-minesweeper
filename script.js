@@ -1,0 +1,172 @@
+//minesweeper game by 101computing.net - www.101computing.et/minesweeper-in-javascript/
+var grid = document.getElementById("grid");
+var gridDimensions = {
+  row: 20;
+  col: 20
+}
+
+var testMode = true; //Turn this variable to true to see where the mines are
+generateGrid();
+
+function generateGrid() {
+  
+  //generate 10 by 10 grid
+  grid.innerHTML = "";
+  for (var i = 0; i < 10; i++) {
+    row = grid.insertRow(i);
+    for (var j = 0; j < 10; j++) {
+      cell = row.insertCell(j);
+      cell.onclick = function() {
+        clickCell(this);
+      };
+      var mine = document.createAttribute("data-mine");
+      mine.value = "false";
+      cell.setAttributeNode(mine);
+    }
+  }
+  addMines();
+}
+
+function addMines() {
+  //Add mines randomly
+  for (var i = 0; i < 20; i++) {
+    var row = Math.floor(Math.random() * 10);
+    var col = Math.floor(Math.random() * 10);
+    var cell = grid.rows[row].cells[col];
+    cell.setAttribute("data-mine", "true");
+    if (testMode) cell.innerHTML = "X";
+  }
+}
+
+function revealMines() {
+  //Highlight all mines in red
+  for (var i = 0; i < 10; i++) {
+    for (var j = 0; j < 10; j++) {
+      var cell = grid.rows[i].cells[j];
+      if (cell.getAttribute("data-mine") == "true") cell.className = "mine";
+    }
+  }
+}
+
+function generateExtendedMap(lastCell){
+  console.log('stub');
+}
+
+function checkLevelCompletion() {
+  var levelComplete = true;
+  var lastCell = {};
+  for (var i = 0; i < 10; i++) {
+    for (var j = 0; j < 10; j++) {
+      if (
+        grid.rows[i].cells[j].getAttribute("data-mine") == "false" &&
+        grid.rows[i].cells[j].innerHTML == ""
+      )
+        levelComplete = false;
+    }
+  }
+  
+  if (levelComplete) {
+    //alert("You Win!");
+    revealMines();
+    //extendedMap(lastCell);
+  }
+}
+
+function clickCell(cell) {
+  //Check if the end-user clicked on a mine
+  if (cell.getAttribute("data-mine") == "true") {
+    revealMines();
+    alert("Game Over");
+  } else {
+    cell.className = "clicked";
+    //Count and display the number of adjacent mines
+    var mineCount = 0;
+    var cellRow = cell.parentNode.rowIndex;
+    var cellCol = cell.cellIndex;
+    //alert(cellRow + " " + cellCol);
+    
+    ///*
+    for (var i = Math.max(cellRow - 1, 0); i <= Math.min(cellRow + 1, 9); i++) {
+      for (var j = Math.max(cellCol - 1, 0);j <= Math.min(cellCol + 1, 9);j++) {
+        if (grid.rows[i].cells[j].getAttribute("data-mine") == "true")
+          mineCount++;
+      }
+    }//*/
+
+    /*
+    
+    processSurroundingCells(cell, (i,j) => {
+      if (grid.rows[i].cells[j].getAttribute("data-mine") == "true") mineCount++;
+      console.log(mineCount);
+    });*/
+
+    cell.innerHTML = mineCount;
+    if (mineCount == 0) {
+      //Reveal all adjacent cells as they do not have a mine
+      processSurroundingCells(cell, (i, j) => {
+        if (grid.rows[i].cells[j].innerHTML == "")
+          clickCell(grid.rows[i].cells[j]);
+      });
+    }
+    checkLevelCompletion();
+  }
+}
+
+function flagCell() {
+  cell.INNERHTML = "!";
+}
+
+function solveCell(cell) {
+  var cellRow = cell.parentNode.rowIndex;
+  var cellCol = cell.cellIndex;
+
+  var i = cellRow;
+  var j = cellCol;
+  if (grid.rows[i].cells[j].innerHTML == "1") {
+    solveCorner(cellRow, cellCol);
+  }
+}
+
+function solve(cell) {
+  if (!cell) {
+    //TODO: go through all cells
+    solve();
+  } else {
+    solve(cell);
+  }
+}
+
+function solveCorner(rowIndex, colIndex) {
+  /*
+  if (
+    ParseInt(grid.rows[i-1].cells[j-1].innerHTML)>="1" &&
+    ParseInt(grid.rows[i].cells[j-1].innerHTML)>="1"
+  ){
+    clickCell(grid.rows[i].cells[j]);
+  }
+  */
+  var unclickedCellCount = 0;
+  var unclickedCell = [];
+  for (var i = Math.max(cellRow - 1, 0); i <= Math.min(cellRow + 1, 9); i++) {
+    for (var j = Math.max(cellCol - 1, 0); j <= Math.min(cellCol + 1, 9); j++) {
+      if (grid.rows[i].cells[j].innerHTML == "") {
+        unclickedCellCount++;
+        unclickedCell = [i, j];
+      }
+    }
+  }
+
+  flagCell(grid.rows[unclickedCell[i]].cells[unclickedCell[j]]);
+}
+
+function processSurroundingCells(cell, callback) {
+  var cellRow = cell.parentNode.rowIndex;
+  var cellCol = cell.cellIndex;
+  for (var i = Math.max(cellRow - 1, 0); i <= Math.min(cellRow + 1, 9); i++) {
+    for (var j = Math.max(cellCol - 1, 0); j <= Math.min(cellCol + 1, 9); j++) {
+      if (grid.rows[i].cells[j].innerHTML == "") {
+        callback.apply(callback,[i, j]);
+      }
+    }
+  }
+}
