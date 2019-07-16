@@ -2,6 +2,10 @@
 var grid = document.getElementById("grid");
 var testMode = true; //Turn this variable to true to see where the mines are
 generateGrid();
+var gridDimensions = {
+  row: 10,
+  col: 10
+};
 
 function generateGrid() {
   //generate 10 by 10 grid
