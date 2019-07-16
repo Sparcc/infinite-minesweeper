@@ -1,15 +1,9 @@
 //minesweeper game by 101computing.net - www.101computing.et/minesweeper-in-javascript/
 var grid = document.getElementById("grid");
-var gridDimensions = {
-  row: 20;
-  col: 20
-}
-
 var testMode = true; //Turn this variable to true to see where the mines are
 generateGrid();
 
 function generateGrid() {
-  
   //generate 10 by 10 grid
   grid.innerHTML = "";
   for (var i = 0; i < 10; i++) {
@@ -48,10 +42,6 @@ function revealMines() {
   }
 }
 
-function generateExtendedMap(lastCell){
-  console.log('stub');
-}
-
 function checkLevelCompletion() {
   var levelComplete = true;
   var lastCell = {};
@@ -68,7 +58,6 @@ function checkLevelCompletion() {
   if (levelComplete) {
     //alert("You Win!");
     revealMines();
-    //extendedMap(lastCell);
   }
 }
 
